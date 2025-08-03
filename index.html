@@ -3,104 +3,465 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lecture Notes Sharing</title>
+    <title>Lecture Resources Portal</title>
     <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
             line-height: 1.6;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-            color: #333;
-            background-color: #f5f5f5;
+            background-color: #f5f7ff;
+            color: var(--dark);
         }
+        
         header {
-            background-color: #2c3e50;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
             color: white;
-            padding: 20px;
+            padding: 2rem 0;
             text-align: center;
-            border-radius: 5px;
-            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
         }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
         h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-weight: 300;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        /* Subjects Grid */
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .subject-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .subject-header {
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .subject-header h3 {
+            font-size: 1.4rem;
             margin: 0;
         }
-        .notes-container {
+        
+        .subject-body {
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .subject-body p {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        
+        .view-btn {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+        }
+        
+        .view-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        /* Resources Section (hidden by default) */
+        .resources-section {
+            display: none;
+            margin-top: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1rem;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem 0;
+        }
+        
+        .back-btn svg {
+            margin-right: 8px;
+        }
+        
+        .resource-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .resource-tab {
+            padding: 0.8rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .resource-tab.active {
+            color: var(--primary);
+        }
+        
+        .resource-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary);
+        }
+        
+        .resource-content {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .resource-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .resources-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+            gap: 1.5rem;
         }
-        .note-card {
+        
+        .resource-card {
             background: white;
             border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
+            padding: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--success);
+            transition: all 0.3s;
         }
-        .note-card:hover {
-            transform: translateY(-5px);
+        
+        .resource-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        .note-card h3 {
-            color: #2c3e50;
-            margin-top: 0;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
+        
+        .resource-card h4 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
         }
-        .note-card p {
+        
+        .resource-card p {
             color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
         }
-        .download-btn {
-            display: inline-block;
-            background-color: #3498db;
-            color: white;
-            padding: 10px 15px;
+        
+        .download-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary);
             text-decoration: none;
-            border-radius: 5px;
-            margin-top: 10px;
-            transition: background-color 0.3s;
+            font-weight: 500;
+            transition: all 0.3s;
         }
-        .download-btn:hover {
-            background-color: #2980b9;
+        
+        .download-link svg {
+            margin-right: 8px;
         }
+        
+        .download-link:hover {
+            color: var(--secondary);
+        }
+        
         footer {
             text-align: center;
-            margin-top: 40px;
-            color: #666;
-            font-size: 0.9em;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            background: var(--dark);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .subjects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <header>
-        <h1>Lecture Notes Sharing</h1>
-        <p>Download course materials shared by your lecturer</p>
+        <div class="header-content">
+            <h1>Lecture Resources Portal</h1>
+            <p class="subtitle">Access notes and question banks for your courses</p>
+        </div>
     </header>
-
-    <div class="notes-container">
-        <!-- Note 1 -->
-        <div class="note-card">
-            <h3>Introduction to Computer Science</h3>
-            <p>Fundamental concepts of computer science and programming basics.</p>
-            <a href="notes/Chapter_1.pdf" class="download-btn" download>Download PDF</a>
+    
+    <div class="container">
+        <!-- Subjects Section -->
+        <div id="subjects-section">
+            <h2>Select a Subject</h2>
+            <div class="subjects-grid">
+                <!-- Information Technology -->
+                <div class="subject-card" data-subject="it">
+                    <div class="subject-header">
+                        <h3>Information Technology</h3>
+                    </div>
+                    <div class="subject-body">
+                        <p>Fundamentals of IT systems</p>
+                        <button class="view-btn">View Resources</button>
+                    </div>
+                </div>
+                
+                <!-- Open Source -->
+                <div class="subject-card" data-subject="opensource">
+                    <div class="subject-header">
+                        <h3>Open Source</h3>
+                    </div>
+                    <div class="subject-body">
+                        <p>Open source technologies, licensing, and community practices</p>
+                        <button class="view-btn">View Resources</button>
+                    </div>
+                </div>
+                
+                <!-- Operating Systems -->
+                <div class="subject-card" data-subject="os">
+                    <div class="subject-header">
+                        <h3>Operating Systems</h3>
+                    </div>
+                    <div class="subject-body">
+                        <p>OS concepts, processes, memory management, and Linux</p>
+                        <button class="view-btn">View Resources</button>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <!-- Note 2 -->
-        <div class="note-card">
-            <h3>Data Structures</h3>
-            <p>Comprehensive guide to arrays, linked lists, stacks, and queues.</p>
-            <a href="notes/Chapter_2.pdf" class="download-btn" download>Download PDF</a>
-        </div>
-
-        <!-- Note 3 -->
-        <div class="note-card">
-            <h3>Algorithms</h3>
-            <p>Essential algorithms including sorting and searching techniques.</p>
-            <a href="notes/Chapter_3.pdf" class="download-btn" download>Download PDF</a>
+        
+        <!-- Resources Section (hidden initially) -->
+        <div id="resources-section" class="resources-section">
+            <button class="back-btn" id="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Subjects
+            </button>
+            
+            <h2 id="resource-subject-title">Subject Name</h2>
+            
+            <div class="resource-tabs">
+                <button class="resource-tab active" data-tab="notes">Lecture Notes</button>
+                <button class="resource-tab" data-tab="questionbank">Question Bank</button>
+            </div>
+            
+            <div id="notes-content" class="resource-content active">
+                <div class="resources-grid" id="notes-grid">
+                    <!-- Notes will be inserted here by JavaScript -->
+                </div>
+            </div>
+            
+            <div id="questionbank-content" class="resource-content">
+                <div class="resources-grid" id="questionbank-grid">
+                    <!-- Question bank items will be inserted here by JavaScript -->
+                </div>
+            </div>
         </div>
     </div>
-
+    
     <footer>
-        <p>© 2023 Your Name - Lecturer. All rights reserved.</p>
+        <p>&copy; 2025 Kawshik a m . All rights reserved.</p>
     </footer>
+
+    <script>
+        // Sample data - replace with your actual resources
+        const resourcesData = {
+            it: {
+                name: "Information Technology",
+                notes: [
+                    { title: "Chapter 1", description: "", file: "notes/Chapter_1.pdf" },
+                    { title: "Chapter 2", description: "", file: "notes/Chapter_2.pdf" },
+                    { title: "Chapter 3", description: "", file: "notes/Chapter_3.pdf" }
+                 ]//,
+                // // questionbank: [
+                // //     { title: "Midterm Questions 2023", description: "Previous year midterm examination questions", file: "qb/it-midterm-2023.pdf" },
+                // //     { title: "Final Exam Practice", description: "Practice questions for final examination", file: "qb/it-final-practice.pdf" }
+                // // ]
+            // },
+            // opensource: {
+            //     name: "Open Source",
+            //     notes: [
+            //         { title: "Open Source Introduction", description: "History and philosophy of open source software", file: "notes/open-source-intro.pdf" },
+            //         { title: "Popular Licenses", description: "Comparison of GPL, MIT, Apache licenses", file: "notes/open-source-licenses.pdf" }
+            //     ]//,
+            //     // questionbank: [
+            //     //     { title: "License Scenarios", description: "Case studies on license applications", file: "qb/opensource-cases.pdf" },
+            //     //     { title: "Community Practices", description: "Questions about open source contributions", file: "qb/opensource-community.pdf" }
+            //     // ]
+            // },
+            // os: {
+            //     name: "Operating Systems",
+            //     notes: [
+            //         { title: "OS Concepts", description: "Processes, threads, scheduling and memory management", file: "notes/os-concepts.pdf" },
+            //         { title: "Linux Basics", description: "Introduction to Linux commands and file system", file: "notes/linux-basics.pdf" },
+            //         { title: "Windows Architecture", description: "Core components of Windows OS", file: "notes/windows-arch.pdf" }
+            //     ]//,
+            //     // questionbank: [
+            //     //     { title: "Process Scheduling Problems", description: "Practice problems on CPU scheduling", file: "qb/os-scheduling.pdf" },
+            //     //     { title: "Memory Management Exercises", description: "Questions on paging and segmentation", file: "qb/os-memory.pdf" },
+            //     //     { title: "Final Exam 2022", description: "Complete previous year question paper", file: "qb/os-final-2022.pdf" }
+            //     // ]
+            }
+        };
+
+        // DOM Elements
+        const subjectsSection = document.getElementById('subjects-section');
+        const resourcesSection = document.getElementById('resources-section');
+        const backBtn = document.getElementById('back-btn');
+        const resourceSubjectTitle = document.getElementById('resource-subject-title');
+        const notesGrid = document.getElementById('notes-grid');
+        const questionbankGrid = document.getElementById('questionbank-grid');
+        const subjectCards = document.querySelectorAll('.subject-card');
+        const resourceTabs = document.querySelectorAll('.resource-tab');
+        const resourceContents = document.querySelectorAll('.resource-content');
+
+        // Event Listeners
+        subjectCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const subjectId = this.getAttribute('data-subject');
+                showResources(subjectId);
+            });
+        });
+
+        backBtn.addEventListener('click', function() {
+            subjectsSection.style.display = 'block';
+            resourcesSection.style.display = 'none';
+        });
+
+        resourceTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                // Update active tab
+                resourceTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show corresponding content
+                resourceContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(`${tabId}-content`).classList.add('active');
+            });
+        });
+
+        // Functions
+        function showResources(subjectId) {
+            const subjectData = resourcesData[subjectId];
+            
+            // Update UI
+            subjectsSection.style.display = 'none';
+            resourcesSection.style.display = 'block';
+            resourceSubjectTitle.textContent = subjectData.name;
+            
+            // Clear previous resources
+            notesGrid.innerHTML = '';
+            questionbankGrid.innerHTML = '';
+            
+            // Populate notes
+            subjectData.notes.forEach(note => {
+                notesGrid.appendChild(createResourceCard(note));
+            });
+            
+            // Populate question bank
+            subjectData.questionbank.forEach(qb => {
+                questionbankGrid.appendChild(createResourceCard(qb));
+            });
+            
+            // Reset to notes tab when changing subject
+            resourceTabs[0].click();
+        }
+
+        function createResourceCard(item) {
+            const card = document.createElement('div');
+            card.className = 'resource-card';
+            
+            card.innerHTML = `
+                <h4>${item.title}</h4>
+                <p>${item.description}</p>
+                <a href="${item.file}" class="download-link" download>
+                    <i class="fas fa-download"></i> Download
+                </a>
+            `;
+            
+            return card;
+        }
+    </script>
 </body>
 </html>
