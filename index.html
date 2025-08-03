@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture Notes Sharing</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            margin: 0;
+        }
+        .notes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .note-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .note-card:hover {
+            transform: translateY(-5px);
+        }
+        .note-card h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .note-card p {
+            color: #666;
+        }
+        .download-btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        .download-btn:hover {
+            background-color: #2980b9;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Lecture Notes Sharing</h1>
+        <p>Download course materials shared by your lecturer</p>
+    </header>
+
+    <div class="notes-container">
+        <!-- Note 1 -->
+        <div class="note-card">
+            <h3>Introduction to Computer Science</h3>
+            <p>Fundamental concepts of computer science and programming basics.</p>
+            <a href="notes/Chapter_1.pdf" class="download-btn" download>Download PDF</a>
+        </div>
+
+        <!-- Note 2 -->
+        <div class="note-card">
+            <h3>Data Structures</h3>
+            <p>Comprehensive guide to arrays, linked lists, stacks, and queues.</p>
+            <a href="notes/Chapter_2.pdf" class="download-btn" download>Download PDF</a>
+        </div>
+
+        <!-- Note 3 -->
+        <div class="note-card">
+            <h3>Algorithms</h3>
+            <p>Essential algorithms including sorting and searching techniques.</p>
+            <a href="notes/Chapter_3.pdf" class="download-btn" download>Download PDF</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2023 Your Name - Lecturer. All rights reserved.</p>
+    </footer>
+</body>
+</html>
