@@ -12,6 +12,7 @@
             --light: #f8f9fa;
             --dark: #212529;
             --success: #4cc9f0;
+            --error: #e63946;
         }
         
         * {
@@ -259,6 +260,88 @@
                 grid-template-columns: 1fr;
             }
         }
+        
+        /* Password Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .password-modal {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active .password-modal {
+            transform: translateY(0);
+        }
+        
+        .password-modal h3 {
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            text-align: center;
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .password-input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .password-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        
+        .password-btn:hover {
+            background: var(--secondary);
+        }
+        
+        .error-message {
+            color: var(--error);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            text-align: center;
+            display: none;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
@@ -342,6 +425,16 @@
         <p>&copy; 2025 Kawshik a m . All rights reserved.</p>
     </footer>
 
+    <!-- Password Modal -->
+    <div class="modal-overlay" id="password-modal">
+        <div class="password-modal">
+            <h3>Enter Password to Access IT Resources</h3>
+            <input type="password" class="password-input" id="password-input" placeholder="Enter password">
+            <p class="error-message" id="password-error">Incorrect password. Please try again.</p>
+            <button class="password-btn" id="password-submit">Submit</button>
+        </div>
+    </div>
+
     <script>
         // Sample data - replace with your actual resources
         const resourcesData = {
@@ -351,35 +444,18 @@
                     { title: "Chapter 1", description: "", file: "notes/Chapter_1.pdf" },
                     { title: "Chapter 2", description: "", file: "notes/Chapter_2.pdf" },
                     { title: "Chapter 3", description: "", file: "notes/Chapter_3.pdf" }
-                 ]//,
-                // // questionbank: [
-                // //     { title: "Midterm Questions 2023", description: "Previous year midterm examination questions", file: "qb/it-midterm-2023.pdf" },
-                // //     { title: "Final Exam Practice", description: "Practice questions for final examination", file: "qb/it-final-practice.pdf" }
-                // // ]
-            // },
-            // opensource: {
-            //     name: "Open Source",
-            //     notes: [
-            //         { title: "Open Source Introduction", description: "History and philosophy of open source software", file: "notes/open-source-intro.pdf" },
-            //         { title: "Popular Licenses", description: "Comparison of GPL, MIT, Apache licenses", file: "notes/open-source-licenses.pdf" }
-            //     ]//,
-            //     // questionbank: [
-            //     //     { title: "License Scenarios", description: "Case studies on license applications", file: "qb/opensource-cases.pdf" },
-            //     //     { title: "Community Practices", description: "Questions about open source contributions", file: "qb/opensource-community.pdf" }
-            //     // ]
-            // },
-            // os: {
-            //     name: "Operating Systems",
-            //     notes: [
-            //         { title: "OS Concepts", description: "Processes, threads, scheduling and memory management", file: "notes/os-concepts.pdf" },
-            //         { title: "Linux Basics", description: "Introduction to Linux commands and file system", file: "notes/linux-basics.pdf" },
-            //         { title: "Windows Architecture", description: "Core components of Windows OS", file: "notes/windows-arch.pdf" }
-            //     ]//,
-            //     // questionbank: [
-            //     //     { title: "Process Scheduling Problems", description: "Practice problems on CPU scheduling", file: "qb/os-scheduling.pdf" },
-            //     //     { title: "Memory Management Exercises", description: "Questions on paging and segmentation", file: "qb/os-memory.pdf" },
-            //     //     { title: "Final Exam 2022", description: "Complete previous year question paper", file: "qb/os-final-2022.pdf" }
-            //     // ]
+                ],
+                questionbank: []
+            },
+            opensource: {
+                name: "Open Source",
+                notes: [],
+                questionbank: []
+            },
+            os: {
+                name: "Operating Systems",
+                notes: [],
+                questionbank: []
             }
         };
 
@@ -393,18 +469,39 @@
         const subjectCards = document.querySelectorAll('.subject-card');
         const resourceTabs = document.querySelectorAll('.resource-tab');
         const resourceContents = document.querySelectorAll('.resource-content');
+        
+        // Password modal elements
+        const passwordModal = document.getElementById('password-modal');
+        const passwordInput = document.getElementById('password-input');
+        const passwordSubmit = document.getElementById('password-submit');
+        const passwordError = document.getElementById('password-error');
+
+        // Password configuration
+        const PASSWORD_PROTECTED_SUBJECT = 'it';
+        const CORRECT_PASSWORD = "secure123"; // Change this to your desired password
+        let subjectToLoad = null;
+        let isAuthenticated = false;
 
         // Event Listeners
         subjectCards.forEach(card => {
             card.addEventListener('click', function() {
                 const subjectId = this.getAttribute('data-subject');
-                showResources(subjectId);
+                
+                // Check if this subject requires password
+                if (subjectId === PASSWORD_PROTECTED_SUBJECT && !isAuthenticated) {
+                    subjectToLoad = subjectId;
+                    showPasswordModal();
+                } else {
+                    showResources(subjectId);
+                }
             });
         });
 
         backBtn.addEventListener('click', function() {
             subjectsSection.style.display = 'block';
             resourcesSection.style.display = 'none';
+            // Reset authentication when going back
+            isAuthenticated = false;
         });
 
         resourceTabs.forEach(tab => {
@@ -419,6 +516,14 @@
                 resourceContents.forEach(content => content.classList.remove('active'));
                 document.getElementById(`${tabId}-content`).classList.add('active');
             });
+        });
+
+        // Password modal events
+        passwordSubmit.addEventListener('click', checkPassword);
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
         });
 
         // Functions
@@ -461,6 +566,28 @@
             `;
             
             return card;
+        }
+
+        function showPasswordModal() {
+            passwordModal.classList.add('active');
+            passwordInput.value = '';
+            passwordError.style.display = 'none';
+            passwordInput.focus();
+        }
+
+        function hidePasswordModal() {
+            passwordModal.classList.remove('active');
+        }
+
+        function checkPassword() {
+            if (passwordInput.value === CORRECT_PASSWORD) {
+                isAuthenticated = true;
+                hidePasswordModal();
+                showResources(subjectToLoad);
+            } else {
+                passwordError.style.display = 'block';
+                passwordInput.focus();
+            }
         }
     </script>
 </body>
